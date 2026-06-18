@@ -47,6 +47,7 @@ export async function register(input: {
     first_name: input.firstName,
     last_name: input.lastName ?? '',
     phone: input.phone,
+    role: 'tenant',
   });
   if (data.status !== 'success' || !data.userData) {
     const msg = Array.isArray(data.message) ? data.message.join(' ') : data.message;

@@ -98,6 +98,14 @@ No `.env` file. Reads `apiBaseUrl` from `app.json` → `expo.extra`. For local d
 
 JWT is stored at runtime in `expo-secure-store` (Keychain on iOS, Keystore on Android).
 
+## Gotchas
+
+**Docker Compose variable substitution in `.env` files.** Compose interpolates `${VAR}` in `.env` values. The shared Django SECRET_KEY contains `$c00i5`, which Compose treats as a missing variable. Either escape `$` as `$$` (so `$c00i5` becomes `$$c00i5`), or wrap the value in single quotes.
+
+**Postgres needs `POSTGRES_*` aliases for bootstrap.** The compose file uses `DB_*` names (read by Django), but the postgres image only initializes from `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`. The `web/backend/.env` template now sets both. If you ever see "Database is uninitialized and superuser password is not specified", you're missing those aliases.
+
+**Two distinct `.env` files in web/.** `web/.env` is read by docker-compose for `${VAR}` substitution in `docker-compose.yml`. `web/backend/.env` is read INTO the Django and Postgres containers via `env_file:`. Both must agree on `DB_PASSWORD`.
+
 ## ⚠️ Rotate the WhatsApp secrets
 
 The Stripe (test), Resend (live), R2 (live), and JWT signing keys were shared via WhatsApp. Treat them as compromised. Rotate in each provider's dashboard before any new collaborator gets the file.
