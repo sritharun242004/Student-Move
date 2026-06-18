@@ -6,13 +6,19 @@ Monorepo for the Student Moves platform.
 
 ```
 Student-Move/
-├── backend/   NestJS microservices (gateway, merchant, reels, marketplace)
-├── mobile/    Expo + React Native + TypeScript app (student app first)
-├── web/       Next.js frontend + Django property backend (added when available)
-└── docs/      Cross-cutting docs
+├── backend/         NestJS microservices (gateway, merchant, reels, marketplace)
+│                    Upstream: visual-science/Studentmoves-app
+├── web/             Property platform — owns the schema
+│   ├── backend/     Django REST API (users, properties, tenants, forms, chat, notifications)
+│   └── frontend/    Next.js app
+│                    Upstream: visual-science/StudentMoves
+├── mobile/          Expo + React Native + TypeScript (student app first)
+└── docs/            Cross-cutting docs
 ```
 
-`backend/` tracks upstream `visual-science/Studentmoves-app` via `git subtree`. See `docs/UPSTREAM_SYNC.md`.
+Both `backend/` and `web/` track their upstreams via `git subtree`. See `docs/UPSTREAM_SYNC.md`.
+
+The **Django backend (`web/backend/`) owns the schema** — it runs migrations against the shared Postgres DB. The NestJS backend reads/writes its own tables in that same DB.
 
 ## Quick start
 

@@ -1,18 +1,24 @@
-# Syncing backend/ with upstream
+# Syncing backend/ and web/ with upstream
 
-`backend/` is added to this repo as a **git subtree** of `visual-science/Studentmoves-app`. This means upstream history is preserved (squashed) and we can pull future changes without manually copying files.
+Both `backend/` and `web/` are added to this repo as **git subtrees** of their upstream repos. This means upstream history is preserved (squashed) and we can pull future changes without manually copying files.
 
-## Remote
+## Remotes
 
 ```
 git remote -v
-# upstream-backend  https://github.com/visual-science/Studentmoves-app.git
+# upstream-backend  https://github.com/visual-science/Studentmoves-app.git  (NestJS, mounted at backend/)
+# upstream-web      https://github.com/visual-science/StudentMoves.git      (Next.js + Django, mounted at web/)
+# origin            https://github.com/sritharun242004/Student-Move.git
 ```
 
-## Pull upstream changes into backend/
+## Pull upstream changes
 
 ```bash
+# NestJS backend
 git subtree pull --prefix=backend upstream-backend main --squash
+
+# Web (Next.js + Django)
+git subtree pull --prefix=web upstream-web main --squash
 ```
 
 This creates a merge commit at the monorepo root. Resolve conflicts in `backend/` as you would for any merge.

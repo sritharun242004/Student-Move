@@ -1,46 +1,103 @@
 # Local environment setup
 
-Secrets are **not** in this repo. They live at:
+The repo now has three apps that share one database:
+
+```
+backend/   NestJS — reels, marketplace, merchant, offers
+web/       Django (web/backend/) + Next.js (web/frontend/)
+mobile/    Expo
+```
+
+The **Django backend (`web/backend/`) owns the schema.** The NestJS backend reads/writes its own tables in the same Postgres database that Django creates and manages with migrations.
+
+Secrets live OUTSIDE the repo at:
 
 ```
 /Users/tharunkumarl/Full Stack/student move/Kt_docs_LOCAL/
 ```
 
-(adjust the path for your machine).
+## About the production DB credentials
 
-## Backend (`backend/.env`)
+The secrets file shows `POSTGRES_HOST=localhost`, user `moocuser`, password `M00kdB@24`. Those work **on the production VPS** (`82.180.154.226`) where Postgres is bound to localhost. You cannot connect to that DB from your laptop — Postgres isn't exposed publicly, and using prod for dev would be risky anyway.
 
-Copy the **gateway** block from `Kt_docs_LOCAL/WhatsApp Secret Data (2).txt` into `backend/.env`:
+So local dev = stand up your own local Postgres, then have Django create the schema, then point NestJS at the same DB.
 
-- `MAIN_PORT`, `CORS_ORIGIN`
-- `MERCHANT_TCP_HOST`, `MERCHANT_TCP_PORT`, `MAIN_SERVICE_BASE_URL`
-- `REELS_TCP_HOST`, `REELS_TCP_PORT`
-- `MARKETPLACE_TCP_HOST`, `MARKETPLACE_TCP_PORT`
-- `POSTGRES_*` (host, port, user, password, db, ssl)
-- `JWT_SIGNING_KEY`
-- `R2_*` (Cloudflare R2 / video storage)
-- `RESEND_*` (email)
-- `REELS_VIDEO_MAX_UPLOAD_BYTES`, `FFMPEG_PATH`, `FFPROBE_PATH`
+## Recommended: Docker Compose (Track A)
 
-For local dev, you can override:
+Install Docker Desktop, then:
 
-- `POSTGRES_HOST=localhost`
-- `MERCHANT_TCP_HOST=localhost`
-- `REELS_TCP_HOST=localhost`
-- `MARKETPLACE_TCP_HOST=localhost`
-- `CORS_ORIGIN=http://localhost:3000,http://localhost:8081`
+```bash
+# One-time per machine
+docker network create studentmoves-network
 
-> ⚠️ The shared `.env` contains **production** keys. Rotate them before any new team member joins.
+# Create web env files
+cp web/backend/.env.example web/backend/.env
+cp web/frontend/.env.example web/frontend/.env
+# Fill the required keys per web/SETUP.md (DB_PASSWORD = M00kdB@24 to match the secrets,
+# DJANGO_ENV=production so it uses Postgres not SQLite, SECRET_KEY, Stripe test keys, Resend key)
 
-## Mobile (`mobile/`)
+# Start Django + Next.js + Postgres
+cd web && docker compose up --build
+```
 
-Mobile reads its API base URL from `app.json` → `expo.extra.apiBaseUrl`.
+This brings up:
+- Postgres 17 (container `container-pg`, port 5432 inside the network)
+- Django backend at http://localhost:8000
+- Next.js frontend at http://localhost:3000
 
-- Production (default): `https://gateway.studentmoves.co.uk/api`
-- Local dev: change to `http://<your-LAN-IP>:4000/api` so the simulator/device can reach your machine. `localhost` does not work on a physical device.
+**Caveat:** the web/docker-compose.yml does NOT expose Postgres port 5432 to the host. To let NestJS (`backend/`) connect to the same DB from the host, add a port mapping. Create `web/docker-compose.override.yml` (gitignored automatically as `docker-compose.override.yml`):
 
-There is **no** `.env` file in `mobile/`. Anything that needs to ship in the binary goes in `app.json` → `extra` and is read via `src/lib/config.ts`. Anything user-specific (JWT) goes in `expo-secure-store` at runtime.
+```yaml
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+```
 
-## Web (Repo 1)
+Then the `backend/.env` values for `POSTGRES_HOST=localhost` and `POSTGRES_PORT=5432` will work.
 
-To be added when the frontend / Django backend repo is cloned. The secrets file has the corresponding blocks already.
+> ⚠️ If you already have another Postgres running on 5432 (e.g. EnterpriseDB at `/Library/PostgreSQL/17`), stop it first or change the override port (e.g. `"5433:5432"` and set `POSTGRES_PORT=5433` in `backend/.env`).
+
+## Alternative: Local Postgres (no Docker)
+
+If you want to use your existing Postgres install:
+
+```sql
+-- Connect to postgres as a superuser, then:
+CREATE ROLE moocuser WITH LOGIN PASSWORD 'M00kdB@24';
+CREATE DATABASE mooc OWNER moocuser;
+GRANT ALL PRIVILEGES ON DATABASE mooc TO moocuser;
+```
+
+Then run Django migrations against it:
+
+```bash
+cd web/backend
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+# Edit .env: DJANGO_ENV=production, DB_HOST=localhost, DB_PASSWORD=M00kdB@24
+python manage.py migrate
+```
+
+Then `cd backend && pnpm run start:dev` — NestJS shares the now-populated DB.
+
+## Per-app env files
+
+### `backend/.env` (NestJS)
+Already created from `Kt_docs_LOCAL/WhatsApp Secret Data (2).txt`. Gateway block, with TCP hosts set to `localhost` for dev.
+
+### `web/backend/.env` (Django)
+Use `web/backend/.env.example` as the template. Match the **studentmoves BACKEND** block in `Kt_docs_LOCAL/WhatsApp Secret Data (2).txt`. Required keys: `SECRET_KEY`, `DJANGO_ENV=production` (to use Postgres), `DB_*`, `STRIPE_*`, `RESEND_API_KEY`, `EMAIL_PASSWORD`.
+
+### `web/frontend/.env` (Next.js)
+Use `web/frontend/.env.example` as the template. Match the **studentmoves FRONTEND** block. For local dev set `NEXT_PUBLIC_API_URL=http://localhost:8000`, `NEXT_PUBLIC_GATEWAY_URL=http://localhost:4000/api`, `NEXTAUTH_URL=http://localhost:3000`.
+
+### `mobile/` (Expo)
+No `.env` file. Reads `apiBaseUrl` from `app.json` → `expo.extra`. For local dev, edit `app.json` and change `apiBaseUrl` to `http://<your-LAN-IP>:4000/api` (NOT `localhost` — physical devices can't reach `localhost` on your laptop).
+
+JWT is stored at runtime in `expo-secure-store` (Keychain on iOS, Keystore on Android).
+
+## ⚠️ Rotate the WhatsApp secrets
+
+The Stripe (test), Resend (live), R2 (live), and JWT signing keys were shared via WhatsApp. Treat them as compromised. Rotate in each provider's dashboard before any new collaborator gets the file.
