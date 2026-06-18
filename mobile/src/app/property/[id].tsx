@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useFavorites } from '@/hooks/use-favorites';
 import { getProperty, resolveImageUrl, type Property } from '@/lib/properties-api';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -69,6 +70,7 @@ function Detail({ label, value }: { label: string; value: string | number | null
 export default function PropertyDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { isFavorite, toggle } = useFavorites();
   const { data: property, isLoading, isError, error } = useQuery({
     queryKey: ['property', id],
     queryFn: () => getProperty(id!),
@@ -96,10 +98,24 @@ export default function PropertyDetail() {
   }
 
   const title = property.name?.trim() || property.address;
+  const favorited = isFavorite(property.id);
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: '', headerBackTitle: 'Back' }} />
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: '',
+          headerBackTitle: 'Back',
+          headerRight: () => (
+            <Pressable onPress={() => toggle(property.id)} hitSlop={10} style={styles.headerHeart}>
+              <Text style={[styles.headerHeartIcon, favorited && styles.headerHeartIconActive]}>
+                {favorited ? '♥' : '♡'}
+              </Text>
+            </Pressable>
+          ),
+        }}
+      />
       <SafeAreaView style={styles.safe} edges={['bottom']}>
         <ScrollView>
           <Gallery property={property} />
@@ -185,4 +201,7 @@ const styles = StyleSheet.create({
   errorMsg: { fontSize: 14, color: '#5f6368', textAlign: 'center' },
   retry: { backgroundColor: '#208AEF', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8 },
   retryText: { color: '#fff', fontWeight: '600' },
+  headerHeart: { paddingHorizontal: 8, paddingVertical: 4 },
+  headerHeartIcon: { fontSize: 24, color: '#5f6368' },
+  headerHeartIconActive: { color: '#e53935' },
 });
