@@ -1,5 +1,5 @@
 import { mainApi } from './api';
-import { setAccessToken, setRefreshToken } from './auth-storage';
+import { setAccessToken, setRefreshToken, setStoredUser } from './auth-storage';
 
 export type AuthUser = {
   id: number;
@@ -7,6 +7,10 @@ export type AuthUser = {
   firstName?: string;
   lastName?: string;
   role?: string;
+  profile?: {
+    phone?: string;
+    status?: string;
+  };
 };
 
 type LoginResponse = {
@@ -31,6 +35,7 @@ export async function login(email: string, password: string): Promise<AuthUser> 
   }
   await setAccessToken(data.access);
   await setRefreshToken(data.refresh);
+  await setStoredUser(data.userData);
   return data.userData;
 }
 

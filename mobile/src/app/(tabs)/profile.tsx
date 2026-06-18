@@ -1,10 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/hooks/use-auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { getMyAcknowledgment } from '@/lib/renters-rights-api';
+
+function Avatar({ initials }: { initials: string }) {
+  return (
+    <View style={styles.avatar}>
+      <Text style={styles.avatarText}>{initials || '·'}</Text>
+    </View>
+  );
+}
 
 function Row({
   title,
@@ -13,7 +22,7 @@ function Row({
   onPress,
 }: {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   status?: 'done' | 'pending';
   onPress: () => void;
 }) {
@@ -21,7 +30,7 @@ function Row({
     <Pressable style={styles.row} onPress={onPress}>
       <View style={{ flex: 1, gap: 2 }}>
         <Text style={styles.rowTitle}>{title}</Text>
-        <Text style={styles.rowSubtitle}>{subtitle}</Text>
+        {subtitle ? <Text style={styles.rowSubtitle}>{subtitle}</Text> : null}
       </View>
       {status === 'done' ? (
         <View style={[styles.pill, styles.pillDone]}>
@@ -41,22 +50,42 @@ function Row({
 export default function ProfileScreen() {
   const { signOut } = useAuth();
   const router = useRouter();
+  const { user } = useCurrentUser();
 
   const { data: rrAck } = useQuery({
     queryKey: ['renters-rights-ack'],
     queryFn: getMyAcknowledgment,
   });
 
+  const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim();
+  const initials =
+    `${(user?.firstName?.[0] ?? '').toUpperCase()}${(user?.lastName?.[0] ?? '').toUpperCase()}` || '·';
+
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Profile</Text>
-        <Text style={styles.note}>Account, tenancy, and compliance.</Text>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.identity}>
+          <Avatar initials={initials} />
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text style={styles.name} numberOfLines={1}>
+              {fullName || 'Your profile'}
+            </Text>
+            <Text style={styles.email} numberOfLines={1}>
+              {user?.email ?? ''}
+            </Text>
+            {user?.profile?.phone ? (
+              <Text style={styles.phone}>{user.profile.phone}</Text>
+            ) : null}
+          </View>
+          <Pressable style={styles.editBtn} onPress={() => router.push('/profile/edit')}>
+            <Text style={styles.editText}>Edit</Text>
+          </Pressable>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionHeader}>Tenancy compliance</Text>
           <Row
-            title="Renters’ Rights Act 2026"
+            title="Renters' Rights Act 2026"
             subtitle={
               rrAck?.acknowledged
                 ? 'Acknowledged'
@@ -67,19 +96,43 @@ export default function ProfileScreen() {
           />
         </View>
 
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>App</Text>
+          <Row title="Settings" onPress={() => router.push('/settings')} />
+        </View>
+
         <Pressable style={styles.signOut} onPress={signOut}>
           <Text style={styles.signOutText}>Sign out</Text>
         </Pressable>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#fff' },
-  container: { flex: 1, padding: 24, gap: 20 },
-  title: { fontSize: 28, fontWeight: '700', color: '#111' },
-  note: { fontSize: 14, color: '#5f6368' },
+  container: { padding: 24, gap: 20 },
+  identity: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#E6F4FE',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: { fontSize: 22, fontWeight: '700', color: '#208AEF' },
+  name: { fontSize: 20, fontWeight: '700', color: '#111' },
+  email: { fontSize: 14, color: '#5f6368' },
+  phone: { fontSize: 13, color: '#5f6368' },
+  editBtn: {
+    borderWidth: 1,
+    borderColor: '#dadce0',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  editText: { fontSize: 13, color: '#208AEF', fontWeight: '600' },
   section: { gap: 8 },
   sectionHeader: {
     fontSize: 12,
@@ -105,7 +158,7 @@ const styles = StyleSheet.create({
   pillPendingText: { color: '#b3261e', fontSize: 12, fontWeight: '600' },
   chevron: { fontSize: 22, color: '#9aa0a6' },
   signOut: {
-    marginTop: 'auto',
+    marginTop: 12,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#dadce0',
