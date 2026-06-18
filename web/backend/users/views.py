@@ -11,7 +11,7 @@ import csv
 from rest_framework import status, viewsets, generics, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, action
-from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from .models import Profile, AgentLandlordRelationship
 from .serializers import (
@@ -70,10 +70,13 @@ class UserLoginApiView(generics.GenericAPIView):
         user = authenticate(username=user_name, password=password)
         if user:
             user_data = UserAuthSerializer(user).data
+            refresh = RefreshToken.for_user(user)
             respObj = {
                 "status": "success",
                 "message": "User Loged In Successfully",
                 "userData": user_data,
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
             }
             return Response(respObj, status=status.HTTP_200_OK)
         else:

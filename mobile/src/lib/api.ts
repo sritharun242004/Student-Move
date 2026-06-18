@@ -1,26 +1,33 @@
 import axios, { AxiosError } from 'axios';
 import { config } from './config';
-import { clearToken, getToken } from './auth-storage';
+import { clearTokens, getAccessToken } from './auth-storage';
 
-export const api = axios.create({
+export const gatewayApi = axios.create({
   baseURL: config.apiBaseUrl,
   timeout: 30000,
 });
 
-api.interceptors.request.use(async (req) => {
-  const token = await getToken();
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
-  return req;
+export const mainApi = axios.create({
+  baseURL: config.mainServiceBaseUrl,
+  timeout: 30000,
 });
 
-api.interceptors.response.use(
-  (res) => res,
-  async (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      await clearToken();
+for (const client of [gatewayApi, mainApi]) {
+  client.interceptors.request.use(async (req) => {
+    const token = await getAccessToken();
+    if (token) {
+      req.headers.Authorization = `Bearer ${token}`;
     }
-    return Promise.reject(error);
-  },
-);
+    return req;
+  });
+
+  client.interceptors.response.use(
+    (res) => res,
+    async (error: AxiosError) => {
+      if (error.response?.status === 401) {
+        await clearTokens();
+      }
+      return Promise.reject(error);
+    },
+  );
+}

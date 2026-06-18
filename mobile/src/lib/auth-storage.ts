@@ -1,15 +1,25 @@
 import * as SecureStore from 'expo-secure-store';
 
-const TOKEN_KEY = 'studentmoves.jwt';
+const ACCESS_KEY = 'studentmoves.jwt.access';
+const REFRESH_KEY = 'studentmoves.jwt.refresh';
 
-export async function getToken(): Promise<string | null> {
-  return SecureStore.getItemAsync(TOKEN_KEY);
+export async function getAccessToken(): Promise<string | null> {
+  return SecureStore.getItemAsync(ACCESS_KEY);
 }
 
-export async function setToken(token: string): Promise<void> {
-  await SecureStore.setItemAsync(TOKEN_KEY, token);
+export async function setAccessToken(token: string): Promise<void> {
+  await SecureStore.setItemAsync(ACCESS_KEY, token);
 }
 
-export async function clearToken(): Promise<void> {
-  await SecureStore.deleteItemAsync(TOKEN_KEY);
+export async function getRefreshToken(): Promise<string | null> {
+  return SecureStore.getItemAsync(REFRESH_KEY);
+}
+
+export async function setRefreshToken(token: string): Promise<void> {
+  await SecureStore.setItemAsync(REFRESH_KEY, token);
+}
+
+export async function clearTokens(): Promise<void> {
+  await SecureStore.deleteItemAsync(ACCESS_KEY);
+  await SecureStore.deleteItemAsync(REFRESH_KEY);
 }
