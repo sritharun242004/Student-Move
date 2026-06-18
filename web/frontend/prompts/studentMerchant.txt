@@ -1,0 +1,40 @@
+Students Merchant Section
+baseUrl = NEXT_PUBLIC_GATEWAY_URL
+
+1. Students will see all active merchant offers in Merchant Offers Tab
+
+### 6.1 Get All Offers
+### GET `/offers/active`
+- **URL:** `{{baseUrl}}/offers/active`
+
+2. If User limit is not exceeded, Student can create a voucher.
+(Use Now Button)
+
+### 6.1 Create Voucher
+### POST `/vouchers`
+- **URL:** `{{baseUrl}}/vouchers`
+- **Headers:** BAREAR TOKEN, `Content-Type: application/json`
+- **Body:**
+```json
+{
+  "offerId": "{{offerId}}"
+}
+```
+
+Response includes `uniqueCode`
+
+When User click "Use Now" Button
+    Request sends to backend and recieve uniqueCode
+    User will see uniqueCode and QR code 
+    uniqecode is simple user will show it to merchant nothing from our side
+    QR code should be generate from uniqueCode (this will be scan from merchant side WILL HANDLE LATER (WIP))
+    For now upto this level
+
+
+3. There is a button Redeemed History
+
+### GET `/offers/student/redeemed/me`
+- **URL:** `{{baseUrl}}/offers/student/redeemed/me`
+- **Headers:** BAREAR TOKEN
+
+will show the history of that student
