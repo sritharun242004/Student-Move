@@ -20,6 +20,7 @@ from .views import (
     UtilityViewSet,
     DirectDebitUtilityViewSet,
     DirectDebitInstallmentViewSet,
+    RentersRightsAckView,
 )
 from .report_views import LandlordLeaseReportView
 from .dashboard_views import landlord_dashboard_stats
@@ -356,6 +357,13 @@ urlpatterns = [
         "debug/create-relationship/",
         create_test_relationship,
         name="create-test-relationship",
+    ),
+
+    # Renters' Rights Act 2026 — tenant compliance acknowledgment
+    path(
+        "renters-rights-ack/",
+        RentersRightsAckView.as_view(),
+        name="renters-rights-ack",
     ),
 
 ]

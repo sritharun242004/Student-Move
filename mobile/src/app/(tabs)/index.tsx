@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import {
   ActivityIndicator,
   FlatList,
@@ -13,10 +14,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { listProperties, type Property, resolveImageUrl } from '@/lib/properties-api';
 
 function PropertyCard({ property }: { property: Property }) {
+  const router = useRouter();
   const imageUrl = resolveImageUrl(property.images[0]?.image);
   const title = property.name?.trim() || property.address;
   return (
-    <Pressable style={styles.card}>
+    <Pressable style={styles.card} onPress={() => router.push(`/property/${property.id}`)}>
       {imageUrl ? (
         <Image source={{ uri: imageUrl }} style={styles.image} contentFit="cover" transition={150} />
       ) : (

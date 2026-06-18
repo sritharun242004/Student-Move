@@ -12,6 +12,7 @@ from .models import (
     Utility,
     DirectDebitUtility,
     DirectDebitInstallment,
+    RentersRightsAcknowledgment,
 )
 
 from studentmove.serializers import CamelCaseSerializer
@@ -651,3 +652,22 @@ class UtilitySerializer(CamelCaseSerializer):
             }
 
         return representation
+
+
+class RentersRightsAcknowledgmentSerializer(CamelCaseSerializer):
+    class Meta:
+        model = RentersRightsAcknowledgment
+        fields = [
+            "id",
+            "pdf_version",
+            "acknowledged_at",
+            "ip_address",
+            "user_agent",
+            "device_info",
+        ]
+        read_only_fields = ["id", "acknowledged_at", "ip_address", "user_agent"]
+
+
+class RentersRightsAcknowledgmentCreateSerializer(serializers.Serializer):
+    pdf_version = serializers.CharField(max_length=64)
+    device_info = serializers.JSONField(required=False, allow_null=True)

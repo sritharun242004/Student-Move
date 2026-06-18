@@ -41,3 +41,8 @@ export async function listProperties(): Promise<Property[]> {
   if (Array.isArray(payload)) return payload;
   return payload.results ?? [];
 }
+
+export async function getProperty(id: number | string): Promise<Property> {
+  const { data } = await mainApi.get<Property>(`/api/properties/${id}/`);
+  return data;
+}

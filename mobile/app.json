@@ -1,16 +1,19 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Student Moves",
+    "slug": "studentmoves",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mobile",
+    "scheme": "studentmoves",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "uk.co.studentmoves.app",
+      "supportsTablet": false
     },
     "android": {
+      "package": "uk.co.studentmoves.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -25,6 +28,9 @@
     },
     "plugins": [
       "expo-router",
+      "expo-secure-store",
+      "expo-video",
+      "expo-web-browser",
       [
         "expo-splash-screen",
         {
@@ -35,13 +41,23 @@
           }
         }
       ],
-      "expo-secure-store",
-      "expo-video",
-      "expo-web-browser"
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Student Moves needs access to your photos so you can upload your profile picture, ID documents and reels.",
+          "cameraPermission": "Student Moves needs camera access so you can take a profile photo, capture your ID and record reels."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "apiBaseUrl": "https://gateway.studentmoves.co.uk/api",
+      "mainServiceBaseUrl": "https://api.studentmoves.co.uk",
+      "rentersRightsPdfUrl": "https://cdn.studentmoves.co.uk/public/renters-rights-2026-v1.pdf",
+      "rentersRightsPdfVersion": "renters-rights-2026-v1"
     }
   }
 }

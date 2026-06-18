@@ -529,4 +529,31 @@ class DirectDebitInstallment(DirectDebitBase):
         return f"DirectDebitInstallment {self.id} - {self.get_status_display()}"
 
 
+class RentersRightsAcknowledgment(models.Model):
+    """Audit record proving a tenant acknowledged the Renters' Rights Act 2026 info sheet
+    before entering a tenancy. Required to satisfy the 1 May 2026 compliance regime."""
 
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="renters_rights_acknowledgments",
+    )
+    pdf_version = models.CharField(
+        max_length=64,
+        help_text="Versioned filename of the info sheet the tenant saw, e.g. renters-rights-2026-v1",
+    )
+    acknowledged_at = models.DateTimeField(auto_now_add=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True, default="")
+    device_info = models.JSONField(
+        null=True,
+        blank=True,
+        help_text="Mobile-supplied context: platform, os version, app version, device model",
+    )
+
+    class Meta:
+        ordering = ["-acknowledged_at"]
+        indexes = [models.Index(fields=["user", "-acknowledged_at"])]
+
+    def __str__(self):
+        return f"RentersRightsAck {self.user_id} {self.pdf_version} @ {self.acknowledged_at:%Y-%m-%d %H:%M}"

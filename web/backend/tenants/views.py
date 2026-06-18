@@ -1,6 +1,8 @@
 from rest_framework import viewsets, generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import (
     Lease,
     MaintenanceRequest,
@@ -13,6 +15,7 @@ from .models import (
     Utility,
     DirectDebitUtility,
     DirectDebitInstallment,
+    RentersRightsAcknowledgment,
 )
 from properties.models import Property
 from .serializers import (
@@ -1493,3 +1496,62 @@ class DirectDebitInstallmentViewSet(viewsets.ModelViewSet):
             "data": response.data,
         }
         return response
+
+
+def _client_ip(request):
+    forwarded = request.META.get("HTTP_X_FORWARDED_FOR")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR")
+
+
+class RentersRightsAckView(APIView):
+    """Tenant acknowledges they've seen the Renters' Rights Act 2026 info sheet.
+
+    GET  -> latest ack for the current user (or null)
+    POST -> create a new ack. Server-captured ip/user_agent + client-supplied
+            pdf_version and device_info.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        from .serializers import RentersRightsAcknowledgmentSerializer
+
+        ack = (
+            RentersRightsAcknowledgment.objects.filter(user=request.user)
+            .order_by("-acknowledged_at")
+            .first()
+        )
+        if not ack:
+            return Response({"acknowledged": False, "acknowledgment": None})
+        return Response(
+            {
+                "acknowledged": True,
+                "acknowledgment": RentersRightsAcknowledgmentSerializer(ack).data,
+            }
+        )
+
+    def post(self, request):
+        from .serializers import (
+            RentersRightsAcknowledgmentCreateSerializer,
+            RentersRightsAcknowledgmentSerializer,
+        )
+
+        payload = RentersRightsAcknowledgmentCreateSerializer(data=request.data)
+        payload.is_valid(raise_exception=True)
+        ack = RentersRightsAcknowledgment.objects.create(
+            user=request.user,
+            pdf_version=payload.validated_data["pdf_version"],
+            device_info=payload.validated_data.get("device_info"),
+            ip_address=_client_ip(request),
+            user_agent=request.META.get("HTTP_USER_AGENT", "")[:2000],
+        )
+        return Response(
+            {
+                "status": "success",
+                "message": "Renters' Rights acknowledgment recorded",
+                "data": RentersRightsAcknowledgmentSerializer(ack).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
