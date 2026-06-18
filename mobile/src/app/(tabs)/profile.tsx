@@ -83,6 +83,15 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
+          <Text style={styles.sectionHeader}>Renting</Text>
+          <Row
+            title="My Applications"
+            subtitle="View applications and continue where you left off"
+            onPress={() => router.push('/applications')}
+          />
+        </View>
+
+        <View style={styles.section}>
           <Text style={styles.sectionHeader}>Tenancy compliance</Text>
           <Row
             title="Renters' Rights Act 2026"

@@ -142,7 +142,9 @@ export default function PropertyDetail() {
         </ScrollView>
 
         <View style={styles.actionBar}>
-          <Pressable style={styles.applyButton}>
+          <Pressable
+            style={styles.applyButton}
+            onPress={() => router.push(`/application/${property.id}/start`)}>
             <Text style={styles.applyButtonText}>Apply for this property</Text>
           </Pressable>
         </View>
