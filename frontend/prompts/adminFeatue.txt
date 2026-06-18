@@ -1,0 +1,119 @@
+Merchant Management
+
+Want to implement new feature for admins.
+This need to added as a seperate tab only for admins. 
+
+Admin should be able to see some stats at the top. then list of merchants seperate approve tab. 
+need to see each one offers. use all api endpoints.
+
+use this as base url: NEXT_PUBLIC_GATEWAY_URL
+
+### 4.1 Update Merchant Approval
+### PATCH `/merchants/:merchantId/approval`
+- **URL:** `{{baseUrl}}/merchants/{{merchantId}}/approval`
+- **Headers:** `BEARER TOKEN` (Admin), `Content-Type: application/json`
+- **Body:**
+```json
+{
+  "isApproved": true
+}
+```
+
+### 4.2 Update Merchant Suspension
+### PATCH `/merchants/:merchantId/suspension`
+- **URL:** `{{baseUrl}}/merchants/{{merchantId}}/suspension`
+- **Headers:** `BEARER TOKEN` (Admin), `Content-Type: application/json`
+- **Body:**
+```json
+{
+  "isSuspended": false
+}
+```
+### 4.3 List All Merchants (with details + offer counts)
+### GET `/admin/all`
+- **URL:** `{{baseUrl}}/admin/merchants`
+- **Headers:** `BEARER TOKEN` (Admin)
+
+**Example Response**
+```json
+[
+  {
+    "id": "d7d1a45b-0b26-4f17-83cb-6d8b850303b1",
+    "userId": "123",
+    "businessName": "John Cafe",
+    "description": "Campus coffee and snacks",
+    "businessEmail": "merchant@example.com",
+    "phone": "+94770000000",
+    "address": "123 Main Street",
+    "isApproved": true,
+    "isSuspended": false,
+    "createdAt": "2026-02-01T09:00:00.000Z",
+    "updatedAt": "2026-02-20T10:30:00.000Z",
+    "offerCounts": {
+      "active": 3,
+      "all": 7
+    }
+  }
+]
+```
+
+### 4.3 Get Offers by Merchant ID
+### GET `/admin/merchant/:merchantId/offers`
+- **URL:** `{{baseUrl}}/admin/merchants/{{merchantId}}/offers`
+- **Headers:** `BEARER TOKEN` (Admin)
+
+**Example Response**
+```json
+{
+  "merchant": {
+    "id": "d7d1a45b-0b26-4f17-83cb-6d8b850303b1",
+    "businessName": "John Cafe",
+    "isApproved": true,
+    "isSuspended": false
+  },
+  "summary": {
+    "totalOffers": 7,
+    "activeOffers": 3,
+    "inactiveOffers": 2,
+    "expiredOffers": 2
+  },
+  "offers": [
+    {
+      "id": "99dc3f0a-5fc1-42f7-95d9-6e8c19dbac08",
+      "title": "10% off Coffee",
+      "description": "Valid for all hot coffees",
+      "discountType": "PERCENTAGE",
+      "usageLimit": 100,
+      "perStudentLimit": 1,
+      "isActive": true,
+      "expiryDate": "2026-12-31T23:59:59.000Z",
+      "createdAt": "2026-02-10T08:00:00.000Z"
+    }
+  ]
+}
+```
+
+### 4.4 Get Overall Platform Stats
+### GET `/admin/stats/overview`
+- **URL:** `{{baseUrl}}/admin/stats/overview`
+- **Headers:** `BEARER TOKEN` (Admin)
+
+**Example Response**
+```json
+{
+  "totalOffers": 420,
+  "activeOffers": 311,
+  "inactiveOffers": 109,
+  "expiredOffers": 57,
+  "totalMerchants": 145,
+  "approvedMerchants": 130,
+  "suspendedMerchants": 6,
+  "successfulRedeems": 980,
+  "failedRedeems": 42,
+  "totalVouchers": 1260,
+  "redeemedVouchers": 980,
+  "expiredVouchers": 190,
+  "pendingVouchers": 90,
+  "totalStudentsWithRedeems": 540,
+  "lastUpdatedAt": "2026-02-25T10:15:00.000Z"
+}

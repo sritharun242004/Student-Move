@@ -1,0 +1,16 @@
+/* Fix for dashboard clickability issues */
+.dashboard-content-fix {
+  position: relative;
+  z-index: 1; /* Ensure content is above potential overlays */
+}
+
+/* Ensure buttons and interactive elements are clickable */
+button,
+a,
+input,
+select,
+textarea,
+.clickable {
+  position: relative;
+  z-index: 2;
+}

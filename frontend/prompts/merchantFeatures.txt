@@ -1,0 +1,220 @@
+Merchant Dashboard
+
+baseUrl = NEXT_PUBLIC_GATEWAY_URL
+apiUrl = NEXT_PUBLIC_API_URL
+
+I want to create a seperate dashboard for merchants.
+(/merchant-dashboard)
+
+New sign-in and sign-up pages.
+
+1. Registration for merchants 
+
+### 5.1 Register Merchant
+### POST `/merchants/register`
+- **URL:** `{{baseUrl}}/merchants/register`
+- **Headers:** `Content-Type: application/json`
+- **Body (JSON):**
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "merchant@example.com",
+  "password": "StrongPass123",
+  "phone": "+94770000000",
+  "businessName": "John Cafe",
+  "description": "Campus coffee and snacks",
+  "address": "123 Main Street"
+}
+
+2. Login for merchant
+IMPORTANT: Here we use same pages for login as in the system. and IMPORTANT thing is we shouuld redirect
+them to merchant dashboard when succesful login. and they should restrict the main dashboard.
+
+* in register page add a small link for merchant regisration
+
+Dashboard
+
+Merchant should able to see his stats.
+
+### 5.5 Get My Merchant Status
+### GET `/merchants/status/me`
+- **URL:** `{{baseUrl}}/merchants/status/me`
+- **Headers:** `BEARER TOKEN` (Merchant)
+
+**Example Response**
+```json
+{
+  "isApproved": true,
+  "isSuspended": true,
+  "hasSecretCode": true
+}
+```
+
+### 5.5 Get My Merchant Overview Stats
+### GET `/merchants/stats/me`
+- **URL:** `{{baseUrl}}/merchants/stats/me`
+- **Headers:** `BEARER TOKEN` (Merchant)
+
+**Example Response**
+```json
+{
+  "totalOffers": 24,
+  "activeOffers": 16,
+  "inactiveOffers": 8,
+  "expiredOffers": 5,
+  "successfulRedeems": 132,
+  "failedRedeems": 7,
+  "totalVouchers": 180,
+  "expiredVouchers": 21,
+  "pendingVouchers": 27,
+  "totalStudentsWithRedeems": 89,
+  "lastUpdatedAt": "2026-03-02T10:15:00.000Z"
+}
+
+Offers Tab (from side bar)
+
+Merchant will be able to create, edit, delete offers, activate/ deactivate
+
+### 5.9 Get My Merchant Offers
+### GET `/offers/merchant/me`
+- **URL:** `{{baseUrl}}/offers/merchant/me`
+- **Headers:** `BEARER TOKEN` (Merchant)
+
+### 5.6 Upload Offer Image
+### POST `/offers/upload-image`
+- **URL:** `{{baseUrl}}/offers/upload-image`
+- **Headers:** `BEARER TOKEN`, `Content-Type: multipart/form-data`
+- **Form-Data:**
+  - key: `image` (type: File)
+
+Response:
+```json
+{
+  "imageUrl": "http://localhost:4000/uploads/1700000000000-123456789.jpg",
+  "fileName": "1700000000000-123456789.jpg"
+}
+```
+
+Notes:
+- Only `image/*` files are allowed
+- Max file size: `2MB`
+- Use returned `imageUrl` when creating/updating offers
+
+### 5.7 Create Offer
+### POST `/offers`
+- **URL:** `{{baseUrl}}/offers`
+- **Headers:** `BEARER TOKEN`, `Content-Type: application/json`
+- **Body:**
+```json
+{
+  "title": "10% off Coffee",
+  "description": "Valid for all hot coffees",
+  "discountType": "PERCENTAGE",
+  "usageLimit": 100,
+  "imageUrl": "http://localhost:4000/uploads/1771926821866-227153514.png",
+  "perStudentLimit": 1,
+  "expiryDate": "2026-12-31T23:59:59.000Z",
+  "isActive": true
+}
+```
+
+Notes:
+- `discountType` allowed values: `PERCENTAGE`, `FIXED_AMOUNT`
+- `usageLimit` optional
+
+### 5.7 Update Offer
+### PATCH `/offers/:offerId`
+- **URL:** `{{baseUrl}}/offers/{{offerId}}`
+- **Headers:** `BEARER TOKEN`, `Content-Type: application/json`
+- **Body (any subset):**
+```json
+{
+  "title": "20% off Coffee",
+  "description": "Updated details",
+  "discountType": "PERCENTAGE",
+  "usageLimit": 200,
+  "perStudentLimit": 2,
+  "expiryDate": "2026-12-31T23:59:59.000Z"
+}
+```
+
+### 5.8 Toggle Offer Activation
+### PATCH `/offers/:offerId/activation`
+- **URL:** `{{baseUrl}}/offers/{{offerId}}/activation`
+- **Headers:** `BEARER TOKEN`, `Content-Type: application/json`
+- **Body:**
+```json
+{
+  "isActive": false
+}
+```
+
+## Merchant Voucher Redeems
+
+Add a new tab calls redeems 
+
+Mobile first UI tab, merchant should able to eather enter code manually or open camera from that cam and scan the code. 
+
+### 5.10 Validate and Redeem Voucher
+### POST `/redemptions/validate`
+- **URL:** `{{baseUrl}}/redemptions/validate`
+- **Headers:** `BEARER TOKEN`, `Content-Type: application/json`
+- **Body:**
+```json
+{
+  "uniqueCode": string
+  "merchantSecretCode": 4 or 6 digit
+}
+```
+
+## Redeem History tab
+
+### 5.11 Get Merchant Redemption Activity
+### GET `/redemptions/activity/me`
+- **URL:** `{{baseUrl}}/redemptions/activity/me`
+- **Headers:** `BEARER TOKEN`, `Content-Type: application/json`
+
+## Profile Section
+
+### 5.2 Get My Merchant Profile
+### GET `/merchants/profile/me`
+- **URL:** `{{baseUrl}}/merchants/profile/me`
+- **Headers:** `BEARER TOKEN`
+
+### 5.3 Update My Merchant Profile
+### PATCH `/merchants/profile/me`
+- **URL:** `{{baseUrl}}/merchants/profile/me`
+- **Headers:** `BEARER TOKEN`, `Content-Type: application/json`
+- **Body (JSON, all optional):**
+```json
+{
+  "businessName": "John Cafe - Updated",
+  "description": "Updated description",
+  "address": "456 New Street"
+}
+```
+
+### 5.4 Set / Update Merchant Secret Code (4 to 6 digits)
+### PATCH `/merchants/profile/me/secret-code`
+- **URL:** `{{baseUrl}}/merchants/profile/me/secret-code`
+- **Headers:** `BEARER TOKEN`, `Content-Type: application/json`
+
+#### First-time set (no previous code required)
+```json
+{
+  "secretCode": "1234"
+}
+```
+
+#### Update existing code (previous code required)
+```json
+{
+  "secretCode": "567890",
+  "previousSecretCode": "1234"
+}
+```
+
+Rules:
+- `secretCode` must match `^\d{4,6}$`
+- `previousSecretCode` required only when editing an already-set code

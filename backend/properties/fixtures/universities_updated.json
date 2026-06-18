@@ -1,0 +1,450 @@
+[
+  {
+    "model": "properties.university",
+    "pk": 1,
+    "fields": {
+      "name": "University of Oxford"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 2,
+    "fields": {
+      "name": "University of Cambridge"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 3,
+    "fields": {
+      "name": "Imperial College London"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 4,
+    "fields": {
+      "name": "University College London"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 5,
+    "fields": {
+      "name": "London School of Economics"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 6,
+    "fields": {
+      "name": "University of Edinburgh"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 7,
+    "fields": {
+      "name": "University of Manchester"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 8,
+    "fields": {
+      "name": "King's College London"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 9,
+    "fields": {
+      "name": "University of Bristol"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 10,
+    "fields": {
+      "name": "University of Warwick"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 11,
+    "fields": {
+      "name": "University of Glasgow"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 12,
+    "fields": {
+      "name": "University of Birmingham"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 13,
+    "fields": {
+      "name": "University of Sheffield"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 14,
+    "fields": {
+      "name": "University of Leeds"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 15,
+    "fields": {
+      "name": "University of Southampton"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 16,
+    "fields": {
+      "name": "University of Nottingham"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 17,
+    "fields": {
+      "name": "University of Liverpool"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 18,
+    "fields": {
+      "name": "Queen Mary University of London"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 19,
+    "fields": {
+      "name": "Durham University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 20,
+    "fields": {
+      "name": "University of York"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 21,
+    "fields": {
+      "name": "University of Leicester"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 22,
+    "fields": {
+      "name": "Coventry University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 23,
+    "fields": {
+      "name": "Cardiff University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 24,
+    "fields": {
+      "name": "Queen's University Belfast"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 25,
+    "fields": {
+      "name": "University of Brighton"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 26,
+    "fields": {
+      "name": "University of Portsmouth"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 27,
+    "fields": {
+      "name": "University of Bath"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 28,
+    "fields": {
+      "name": "Canterbury Christ Church University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 29,
+    "fields": {
+      "name": "University of Kent"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 30,
+    "fields": {
+      "name": "University of Exeter"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 31,
+    "fields": {
+      "name": "University of Hull"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 32,
+    "fields": {
+      "name": "University of East Anglia"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 33,
+    "fields": {
+      "name": "University of Plymouth"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 34,
+    "fields": {
+      "name": "Swansea University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 35,
+    "fields": {
+      "name": "University of Aberdeen"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 36,
+    "fields": {
+      "name": "University of Dundee"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 37,
+    "fields": {
+      "name": "University of Stirling"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 38,
+    "fields": {
+      "name": "University of St Andrews"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 39,
+    "fields": {
+      "name": "Loughborough University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 40,
+    "fields": {
+      "name": "University of Reading"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 41,
+    "fields": {
+      "name": "University of Surrey"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 42,
+    "fields": {
+      "name": "University of Hertfordshire"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 43,
+    "fields": {
+      "name": "Bournemouth University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 44,
+    "fields": {
+      "name": "University of Central Lancashire"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 45,
+    "fields": {
+      "name": "Lancaster University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 46,
+    "fields": {
+      "name": "Bangor University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 47,
+    "fields": {
+      "name": "Aberystwyth University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 48,
+    "fields": {
+      "name": "Wrexham Glyndwr University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 49,
+    "fields": {
+      "name": "Newcastle University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 50,
+    "fields": {
+      "name": "Northumbria University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 51,
+    "fields": {
+      "name": "Leeds Beckett University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 52,
+    "fields": {
+      "name": "Sheffield Hallam University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 53,
+    "fields": {
+      "name": "University of the West of England"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 54,
+    "fields": {
+      "name": "De Montfort University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 55,
+    "fields": {
+      "name": "Birmingham City University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 56,
+    "fields": {
+      "name": "Manchester Metropolitan University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 57,
+    "fields": {
+      "name": "Liverpool John Moores University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 58,
+    "fields": {
+      "name": "Edinburgh Napier University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 59,
+    "fields": {
+      "name": "Glasgow Caledonian University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 60,
+    "fields": {
+      "name": "University of Strathclyde"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 61,
+    "fields": {
+      "name": "University of Sunderland"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 62,
+    "fields": {
+      "name": "University of Bradford"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 63,
+    "fields": {
+      "name": "Staffordshire University"
+    }
+  },
+  {
+    "model": "properties.university",
+    "pk": 64,
+    "fields": {
+      "name": "University of Derby"
+    }
+  }
+]
