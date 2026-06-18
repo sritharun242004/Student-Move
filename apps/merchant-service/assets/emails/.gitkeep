@@ -1,0 +1,3 @@
+# Place the attachment file for merchant approval emails here.
+# The filename must match the MERCHANT_APPROVAL_ATTACHMENT env var in .env.
+# Example: approval.png
