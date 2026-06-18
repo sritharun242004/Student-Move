@@ -1,0 +1,159 @@
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: apps/gateway/Dockerfile
+    restart: unless-stopped
+    environment:
+      MAIN_PORT: ${MAIN_PORT:-4000}
+      UPLOAD_DIR: /app/uploads
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      MERCHANT_TCP_HOST: merchant-service
+      MERCHANT_TCP_PORT: ${MERCHANT_TCP_PORT:-4101}
+      REELS_TCP_HOST: reels-service
+      REELS_TCP_PORT: ${REELS_TCP_PORT:-4102}
+      MARKETPLACE_TCP_HOST: marketplace-service
+      MARKETPLACE_TCP_PORT: ${MARKETPLACE_TCP_PORT:-4103}
+      JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID}
+      R2_BUCKET: ${R2_BUCKET:-student-reels}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY}
+      R2_ENDPOINT: ${R2_ENDPOINT}
+      R2_REELS_PREFIX: ${R2_REELS_PREFIX:-reels}
+      R2_PUBLIC_BASE_URL: ${R2_PUBLIC_BASE_URL}
+    depends_on:
+      merchant-service:
+        condition: service_started
+      reels-service:
+        condition: service_started
+      marketplace-service:
+        condition: service_started
+    ports:
+      - "${MAIN_PORT:-4000}:${MAIN_PORT:-4000}"
+    volumes:
+      - uploads-data:/app/uploads
+    networks:
+      - studentmoves-network
+
+  merchant-service:
+    build:
+      context: .
+      dockerfile: apps/merchant-service/Dockerfile
+    restart: unless-stopped
+    environment:
+      JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_SSL: ${POSTGRES_SSL:-false}
+      MERCHANT_TCP_HOST: 0.0.0.0
+      MERCHANT_TCP_PORT: ${MERCHANT_TCP_PORT:-4101}
+      MAIN_SERVICE_BASE_URL: http://django-backend:8000
+      MERCHANT_APPROVAL_ATTACHMENT: ${MERCHANT_APPROVAL_ATTACHMENT}
+      RESEND_FROM: ${RESEND_FROM}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+    volumes:
+      - uploads-data:/app/uploads
+    networks:
+      - studentmoves-network
+
+  reels-service:
+    build:
+      context: .
+      dockerfile: apps/reels-service/Dockerfile
+    restart: unless-stopped
+    environment:
+      JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_SSL: ${POSTGRES_SSL:-false}
+      REELS_TCP_HOST: 0.0.0.0
+      REELS_TCP_PORT: ${REELS_TCP_PORT:-4102}
+      MAIN_SERVICE_BASE_URL: http://django-backend:8000
+      REELS_VIDEO_MAX_UPLOAD_BYTES: ${REELS_VIDEO_MAX_UPLOAD_BYTES:-104857600}
+      FFMPEG_PATH: ${FFMPEG_PATH:-ffmpeg}
+      FFPROBE_PATH: ${FFPROBE_PATH:-ffprobe}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID}
+      R2_BUCKET: ${R2_BUCKET:-student-reels}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY}
+      R2_ENDPOINT: ${R2_ENDPOINT}
+      R2_REELS_PREFIX: ${R2_REELS_PREFIX:-reels}
+      R2_PUBLIC_BASE_URL: ${R2_PUBLIC_BASE_URL}
+    networks:
+      - studentmoves-network
+
+  merchant-migrator:
+    build:
+      context: .
+      dockerfile: apps/merchant-service/Dockerfile
+      target: migrator
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_SSL: ${POSTGRES_SSL:-false}
+    networks:
+      - studentmoves-network
+
+  reels-migrator:
+    build:
+      context: .
+      dockerfile: apps/reels-service/Dockerfile
+      target: migrator
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_SSL: ${POSTGRES_SSL:-false}
+    networks:
+      - studentmoves-network
+
+  marketplace-service:
+    build:
+      context: .
+      dockerfile: apps/marketplace-service/Dockerfile
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_SSL: ${POSTGRES_SSL:-false}
+      MARKETPLACE_TCP_HOST: 0.0.0.0
+      MARKETPLACE_TCP_PORT: ${MARKETPLACE_TCP_PORT:-4103}
+    networks:
+      - studentmoves-network
+
+  marketplace-migrator:
+    build:
+      context: .
+      dockerfile: apps/marketplace-service/Dockerfile
+      target: migrator
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_SSL: ${POSTGRES_SSL:-false}
+    networks:
+      - studentmoves-network
+
+volumes:
+  uploads-data:
+
+networks:
+  studentmoves-network:
+    external: true

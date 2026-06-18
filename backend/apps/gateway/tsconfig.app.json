@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "paths": {
+      "@app/contracts": ["dist/libs/contracts"],
+      "@app/contracts/*": ["dist/libs/contracts/*"],
+      "@app/postgres-db": ["dist/libs/postgres-db"],
+      "@app/postgres-db/*": ["dist/libs/postgres-db/*"],
+      "@app/mailer": ["dist/libs/mailer"],
+      "@app/mailer/*": ["dist/libs/mailer/*"]
+    },
+    "outDir": "../../dist/apps/gateway",
+    "tsBuildInfoFile": "../../dist/apps/gateway/tsconfig.app.tsbuildinfo"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
+}

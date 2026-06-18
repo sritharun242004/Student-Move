@@ -1,0 +1,20 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { PostgresDbModule } from '@app/postgres-db';
+import { NotificationModule } from '@app/notifications';
+import { HealthRpcController } from './shared/health.rpc.controller';
+import { ReelsModule } from './reels/reels.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    PostgresDbModule.forRoot(),
+    NotificationModule,
+    ReelsModule,
+  ],
+  controllers: [HealthRpcController],
+})
+export class ReelsServiceModule {}
