@@ -47,7 +47,8 @@
           "photosPermission": "Student Moves needs access to your photos so you can upload your profile picture, ID documents and reels.",
           "cameraPermission": "Student Moves needs camera access so you can take a profile photo, capture your ID and record reels."
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { DateField } from '@/components/date-field';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import {
   createApplication,
@@ -178,13 +179,12 @@ export default function ApplicationStart() {
               <>
                 <Text style={styles.label}>I am applying as</Text>
                 <StatusToggle value={status} onChange={setStatus} />
-                <Field
+                <DateField
                   label="Date of birth"
                   value={dob}
-                  onChangeText={setDob}
-                  placeholder="YYYY-MM-DD"
-                  keyboardType="numeric"
-                  autoCapitalize="none"
+                  onChange={setDob}
+                  placeholder="Select date of birth"
+                  maximumDate={new Date()}
                 />
                 <Field
                   label="How did you hear about Student Moves?"
@@ -236,23 +236,20 @@ export default function ApplicationStart() {
               </>
             ) : step === 2 ? (
               <>
-                <Field
+                <DateField
                   label="Move-in date"
                   value={startDate}
-                  onChangeText={setStartDate}
-                  placeholder="YYYY-MM-DD"
-                  keyboardType="numeric"
-                  autoCapitalize="none"
+                  onChange={setStartDate}
+                  placeholder="Select move-in date"
                   optional
                 />
-                <Field
+                <DateField
                   label="Move-out date"
                   value={endDate}
-                  onChangeText={setEndDate}
-                  placeholder="YYYY-MM-DD"
-                  keyboardType="numeric"
-                  autoCapitalize="none"
+                  onChange={setEndDate}
+                  placeholder="Select move-out date"
                   optional
+                  minimumDate={startDate ? new Date(startDate) : undefined}
                 />
                 <Field
                   label="Deposit amount (£)"

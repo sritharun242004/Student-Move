@@ -29,9 +29,17 @@ type RegisterResponse = {
 
 export async function login(email: string, password: string): Promise<AuthUser> {
   const { data } = await mainApi.post<LoginResponse>('/api/auth/login/', { email, password });
-  if (data.status !== 'success' || !data.access || !data.refresh || !data.userData) {
+  if (data.status !== 'success') {
     const msg = Array.isArray(data.message) ? data.message.join(' ') : data.message;
     throw new Error(msg || 'Sign in failed');
+  }
+  if (!data.access || !data.refresh) {
+    throw new Error(
+      'Sign-in is temporarily unavailable — the server needs an update to issue mobile tokens. Please try again later.',
+    );
+  }
+  if (!data.userData) {
+    throw new Error('Sign-in response is missing your account data. Try again.');
   }
   await setAccessToken(data.access);
   await setRefreshToken(data.refresh);
