@@ -62,7 +62,7 @@ export default function ApplicationsList() {
             data={data ?? []}
             keyExtractor={(a) => String(a.id)}
             renderItem={({ item }) => (
-              <Card app={item} onPress={() => router.push(`/property/${item.property}`)} />
+              <Card app={item} onPress={() => router.push(`/applications/${item.id}`)} />
             )}
             ListEmptyComponent={
               <View style={styles.empty}>

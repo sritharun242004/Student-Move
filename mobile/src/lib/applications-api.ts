@@ -75,3 +75,28 @@ export async function createApplication(
   const { data } = await mainApi.post<Application>(`/api/forms/apply/${propertyId}/`, payload);
   return data;
 }
+
+export type ApplicationDetail = Application & {
+  nic?: string | null;
+  signature?: string | null;
+};
+
+export async function getApplication(id: number | string): Promise<ApplicationDetail> {
+  const { data } = await mainApi.get<ApplicationDetail>(`/api/forms/application/${id}/`);
+  return data;
+}
+
+export async function uploadNic(
+  id: number | string,
+  file: { uri: string; name: string; type: string },
+): Promise<void> {
+  const form = new FormData();
+  form.append('nic', file as unknown as Blob);
+  await mainApi.put(`/api/forms/application/${id}/add-nic/`, form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+}
+
+export async function markApplicationCompleted(id: number | string): Promise<void> {
+  await mainApi.patch(`/api/forms/application/${id}/completed/`, {});
+}

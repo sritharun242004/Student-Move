@@ -23,7 +23,7 @@ export default function ApplicationSubmitted() {
             <Pressable
               style={styles.primary}
               onPress={() => router.replace('/applications')}>
-              <Text style={styles.primaryText}>Go to My Applications</Text>
+              <Text style={styles.primaryText}>Continue application</Text>
             </Pressable>
             <Pressable style={styles.secondary} onPress={() => router.replace('/(tabs)')}>
               <Text style={styles.secondaryText}>Back to browse</Text>
