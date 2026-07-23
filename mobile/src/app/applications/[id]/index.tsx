@@ -284,9 +284,9 @@ export default function ApplicationDetailScreen() {
 
           <ChecklistRow
             title="Sign tenancy agreement"
-            subtitle={hasSignature ? 'Signed' : 'After steps above — coming soon'}
-            status={hasSignature ? 'done' : 'locked'}
-            disabled
+            subtitle={hasSignature ? 'Signed' : 'Review terms and add your signature'}
+            status={hasSignature ? 'done' : 'pending'}
+            onPress={() => router.push(`/applications/${app.id}/agreement`)}
           />
 
           {!app.isCompleted ? (
