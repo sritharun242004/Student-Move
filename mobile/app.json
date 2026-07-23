@@ -56,6 +56,7 @@
     "extra": {
       "apiBaseUrl": "https://gateway.studentmoves.co.uk/api",
       "mainServiceBaseUrl": "https://api.studentmoves.co.uk",
+      "webBaseUrl": "https://studentmoves.co.uk",
       "rentersRightsPdfUrl": "https://cdn.studentmoves.co.uk/public/renters-rights-2026-v1.pdf",
       "rentersRightsPdfVersion": "renters-rights-2026-v1"
     }

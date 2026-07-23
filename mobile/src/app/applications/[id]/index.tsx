@@ -24,6 +24,7 @@ import {
   type ApplicationDetail,
 } from '@/lib/applications-api';
 import { config } from '@/lib/config';
+import { getGuarantorForm } from '@/lib/guarantor-api';
 import { getMyAcknowledgment } from '@/lib/renters-rights-api';
 
 function resolveMediaUrl(url: string | null | undefined): string | null {
@@ -129,6 +130,11 @@ export default function ApplicationDetailScreen() {
     queryFn: () => getParentDetails(id!),
     enabled: !!id,
   });
+  const { data: guarantor } = useQuery({
+    queryKey: ['guarantor-form', id],
+    queryFn: () => getGuarantorForm(id!),
+    enabled: !!id,
+  });
 
   const complete = useMutation({
     mutationFn: () => markApplicationCompleted(id!),
@@ -166,8 +172,9 @@ export default function ApplicationDetailScreen() {
   const hasStudent = !!student;
   const hasEmployee = !!employee;
   const hasParent = !!parent;
+  const hasGuarantor = !!guarantor;
   const statusFormDone = app.status === 'Student' ? hasStudent : hasEmployee;
-  const canComplete = hasNic && rrDone && statusFormDone && hasParent;
+  const canComplete = hasNic && rrDone && statusFormDone && hasParent && hasGuarantor;
 
   return (
     <>
@@ -265,10 +272,14 @@ export default function ApplicationDetailScreen() {
           />
 
           <ChecklistRow
-            title="Guarantor details"
-            subtitle="Add a guarantor — coming soon"
-            status="locked"
-            disabled
+            title="Guarantor"
+            subtitle={
+              hasGuarantor
+                ? `Completed by ${guarantor.guarantorName}`
+                : 'Send a share link to your guarantor'
+            }
+            status={hasGuarantor ? 'done' : 'pending'}
+            onPress={() => router.push(`/applications/${app.id}/guarantor`)}
           />
 
           <ChecklistRow
