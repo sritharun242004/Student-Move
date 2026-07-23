@@ -20,6 +20,14 @@ export default function AppTabs() {
         />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="reels">
+        <NativeTabs.Trigger.Label>Reels</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          src={require('@/assets/images/tabIcons/home.png')}
+          renderingMode="template"
+        />
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="marketplace">
         <NativeTabs.Trigger.Label>Market</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
