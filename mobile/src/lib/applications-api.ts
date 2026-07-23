@@ -100,3 +100,124 @@ export async function uploadNic(
 export async function markApplicationCompleted(id: number | string): Promise<void> {
   await mainApi.patch(`/api/forms/application/${id}/completed/`, {});
 }
+
+// ---------- Sub-forms ----------
+
+export type StudentDetails = {
+  university: string;
+  studentId: string;
+  courseName: string;
+  length: string;
+  currentYear: number;
+  nin: string;
+  loanRecieved: number;
+};
+
+export type EmployeeDetails = {
+  employer: string;
+  address: string;
+  postcode: string;
+  phone: string;
+  years: number;
+  months: number;
+  jobTitle: string;
+};
+
+export type ParentDetails = {
+  name: string;
+  address: string;
+  postcode: string;
+  phone: string;
+  workName: string;
+  workAddress: string;
+  workPostcode: string;
+  workPhone: string;
+  relationship: string;
+};
+
+export type PreviousLandlordDetails = {
+  name?: string;
+  address?: string;
+  postcode?: string;
+  numberOfBeds?: number;
+  currentRent?: number;
+  perWeek?: number;
+  bond?: number;
+};
+
+async function safeGet<T>(url: string): Promise<T | null> {
+  try {
+    const { data } = await mainApi.get<T>(url);
+    return data;
+  } catch (e) {
+    // 404 = not filled in yet; treat as null. Re-throw other errors.
+    if (
+      typeof e === 'object' &&
+      e !== null &&
+      'response' in e &&
+      (e as { response: { status: number } }).response?.status === 404
+    ) {
+      return null;
+    }
+    throw e;
+  }
+}
+
+export const getStudentDetails = (formId: number | string) =>
+  safeGet<StudentDetails>(`/api/forms/${formId}/student/`);
+export const getEmployeeDetails = (formId: number | string) =>
+  safeGet<EmployeeDetails>(`/api/forms/${formId}/employee/`);
+export const getParentDetails = (formId: number | string) =>
+  safeGet<ParentDetails>(`/api/forms/${formId}/parent/`);
+export const getPreviousLandlord = (formId: number | string) =>
+  safeGet<PreviousLandlordDetails>(`/api/forms/${formId}/landlord/`);
+
+export async function saveStudentDetails(formId: number | string, d: StudentDetails) {
+  await mainApi.post(`/api/forms/${formId}/student/`, {
+    university: d.university,
+    student_id: d.studentId,
+    course_name: d.courseName,
+    length: d.length,
+    current_year: d.currentYear,
+    nin: d.nin,
+    loan_recieved: d.loanRecieved,
+  });
+}
+
+export async function saveEmployeeDetails(formId: number | string, d: EmployeeDetails) {
+  await mainApi.post(`/api/forms/${formId}/employee/`, {
+    employer: d.employer,
+    address: d.address,
+    postcode: d.postcode,
+    phone: d.phone,
+    years: d.years,
+    months: d.months,
+    job_title: d.jobTitle,
+  });
+}
+
+export async function saveParentDetails(formId: number | string, d: ParentDetails) {
+  await mainApi.post(`/api/forms/${formId}/parent/`, {
+    name: d.name,
+    address: d.address,
+    postcode: d.postcode,
+    phone: d.phone,
+    work_name: d.workName,
+    work_address: d.workAddress,
+    work_postcode: d.workPostcode,
+    work_phone: d.workPhone,
+    relationship: d.relationship,
+  });
+}
+
+export async function savePreviousLandlord(formId: number | string, d: PreviousLandlordDetails) {
+  await mainApi.post(`/api/forms/${formId}/landlord/`, {
+    name: d.name || null,
+    address: d.address || null,
+    postcode: d.postcode || null,
+    number_of_beds: d.numberOfBeds ?? null,
+    current_rent: d.currentRent ?? null,
+    per_week: d.perWeek ?? null,
+    bond: d.bond ?? null,
+  });
+}

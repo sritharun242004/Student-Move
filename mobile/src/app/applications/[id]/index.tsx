@@ -16,6 +16,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
   getApplication,
+  getEmployeeDetails,
+  getParentDetails,
+  getStudentDetails,
   markApplicationCompleted,
   uploadNic,
   type ApplicationDetail,
@@ -111,6 +114,22 @@ export default function ApplicationDetailScreen() {
     queryFn: getMyAcknowledgment,
   });
 
+  const { data: student } = useQuery({
+    queryKey: ['student-details', id],
+    queryFn: () => getStudentDetails(id!),
+    enabled: !!id && app?.status === 'Student',
+  });
+  const { data: employee } = useQuery({
+    queryKey: ['employee-details', id],
+    queryFn: () => getEmployeeDetails(id!),
+    enabled: !!id && app?.status === 'Employee',
+  });
+  const { data: parent } = useQuery({
+    queryKey: ['parent-details', id],
+    queryFn: () => getParentDetails(id!),
+    enabled: !!id,
+  });
+
   const complete = useMutation({
     mutationFn: () => markApplicationCompleted(id!),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['application', id] }),
@@ -144,7 +163,11 @@ export default function ApplicationDetailScreen() {
   const hasNic = !!app.nic;
   const hasSignature = !!app.signature;
   const rrDone = !!rrAck?.acknowledged;
-  const canComplete = hasNic && rrDone;
+  const hasStudent = !!student;
+  const hasEmployee = !!employee;
+  const hasParent = !!parent;
+  const statusFormDone = app.status === 'Student' ? hasStudent : hasEmployee;
+  const canComplete = hasNic && rrDone && statusFormDone && hasParent;
 
   return (
     <>
@@ -209,6 +232,36 @@ export default function ApplicationDetailScreen() {
             subtitle={rrDone ? 'Acknowledged' : 'Read the info sheet and confirm before signing'}
             status={rrDone ? 'done' : 'pending'}
             onPress={() => router.push('/renters-rights')}
+          />
+
+          {app.status === 'Student' ? (
+            <ChecklistRow
+              title="Student details"
+              subtitle={hasStudent ? 'Provided' : 'University, course, student ID, loan'}
+              status={hasStudent ? 'done' : 'pending'}
+              onPress={() => router.push(`/applications/${app.id}/student`)}
+            />
+          ) : (
+            <ChecklistRow
+              title="Employer details"
+              subtitle={hasEmployee ? 'Provided' : 'Employer, job title, tenure'}
+              status={hasEmployee ? 'done' : 'pending'}
+              onPress={() => router.push(`/applications/${app.id}/employee`)}
+            />
+          )}
+
+          <ChecklistRow
+            title="Next of kin"
+            subtitle={hasParent ? 'Provided' : 'Parent or guardian contact'}
+            status={hasParent ? 'done' : 'pending'}
+            onPress={() => router.push(`/applications/${app.id}/parent`)}
+          />
+
+          <ChecklistRow
+            title="Previous landlord (optional)"
+            subtitle="Rental history — helps with your credit check"
+            status="pending"
+            onPress={() => router.push(`/applications/${app.id}/landlord`)}
           />
 
           <ChecklistRow
