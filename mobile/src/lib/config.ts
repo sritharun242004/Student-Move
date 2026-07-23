@@ -6,6 +6,7 @@ type AppExtra = {
   webBaseUrl: string;
   rentersRightsPdfUrl: string;
   rentersRightsPdfVersion: string;
+  stripePublishableKey: string;
 };
 
 const extra = (Constants.expoConfig?.extra ?? {}) as Partial<AppExtra>;
@@ -18,4 +19,5 @@ export const config = {
     extra.rentersRightsPdfUrl ??
     'https://cdn.studentmoves.co.uk/public/renters-rights-2026-v1.pdf',
   rentersRightsPdfVersion: extra.rentersRightsPdfVersion ?? 'renters-rights-2026-v1',
+  stripePublishableKey: extra.stripePublishableKey ?? '',
 };

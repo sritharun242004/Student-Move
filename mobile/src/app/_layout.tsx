@@ -2,10 +2,12 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useRouter, useSegments }
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { useAuth } from '@/hooks/use-auth';
 import { useOnboarding } from '@/hooks/use-onboarding';
+import { config } from '@/lib/config';
 import { queryClient } from '@/lib/query-client';
 
 function AuthGate() {
@@ -41,16 +43,20 @@ function AuthGate() {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <AnimatedSplashOverlay />
-        <AuthGate />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="onboarding" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <StripeProvider
+      publishableKey={config.stripePublishableKey}
+      merchantIdentifier="merchant.uk.co.studentmoves.app">
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <AnimatedSplashOverlay />
+          <AuthGate />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="onboarding" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(tabs)" />
+          </Stack>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </StripeProvider>
   );
 }

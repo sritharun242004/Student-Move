@@ -48,7 +48,14 @@
           "cameraPermission": "Student Moves needs camera access so you can take a profile photo, capture your ID and record reels."
         }
       ],
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.uk.co.studentmoves.app",
+          "enableGooglePay": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
@@ -59,7 +66,8 @@
       "mainServiceBaseUrl": "https://api.studentmoves.co.uk",
       "webBaseUrl": "https://studentmoves.co.uk",
       "rentersRightsPdfUrl": "https://cdn.studentmoves.co.uk/public/renters-rights-2026-v1.pdf",
-      "rentersRightsPdfVersion": "renters-rights-2026-v1"
+      "rentersRightsPdfVersion": "renters-rights-2026-v1",
+      "stripePublishableKey": "pk_test_51S6YhGRrAh6fhypdmNQkfV7dftwgH9NPZJAQYZGUst6TRdVLnelIWm7NcJqqJ09BcZ3v6IzigFgSxBoZY6kEUWWp00YorjhCV3"
     }
   }
 }

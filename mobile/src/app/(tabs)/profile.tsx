@@ -89,6 +89,12 @@ export default function ProfileScreen() {
             subtitle="View applications and continue where you left off"
             onPress={() => router.push('/applications')}
           />
+          <View style={{ height: 8 }} />
+          <Row
+            title="My Tenancies"
+            subtitle="Active leases, rent and utility payments"
+            onPress={() => router.push('/tenancy')}
+          />
         </View>
 
         <View style={styles.section}>
